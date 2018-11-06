@@ -5,7 +5,7 @@ Users can create an account, withdraw/deposit funds, see transaction details (wi
 delete accounts, and eventually close the app. 
 Note: This program will create a local sqlite file, so plan accordingly.
 
-## Pre-Requisites 
+## Prerequisites 
 
 - Python 3.5 or above (ensuring that it is added to path)
 - Pip (for package/module installations)
