@@ -1,5 +1,3 @@
-#Personal Bank Program
-
 #Importing Modules
 import sqlite3
 import datetime
