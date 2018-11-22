@@ -1,8 +1,4 @@
-#Jason Surendran
-#May 17 2018
-#Updated August 2 2018
 #Personal Bank Program
-
 
 #Importing Modules
 import sqlite3
@@ -24,14 +20,16 @@ db.execute("CREATE VIEW IF NOT EXISTS localhistory AS"
 #Account Object
 class Account:
 
+    #Providing time stamps for entries       
     def _current_time():
         return pytz.utc.localize(datetime.datetime.utcnow())
         
-
+    #Intialize account
     def __init__(self, name: str, opening_balance: int = 0):
         cursor = db.execute("SELECT name, balance FROM accounts WHERE (name = ?)", (name,))
         row = cursor.fetchone()
 
+        #Check if account exists   
         if row:
             self.name, self._balance = row
             print("Account Already Exists For {}. ".format(self.name), end='')
@@ -43,6 +41,7 @@ class Account:
             print("Account Created For {}. ".format(self.name), end='')
         self.show_balance()
 
+    #Save change in value
     def _save_update(self, amount):
         new_balance = self._balance + amount
         deposit_time = Account._current_time()
@@ -55,14 +54,14 @@ class Account:
             db.commit()
             self._balance = new_balance      
         
-
+    #Deposit value
     def deposit(self, amount: int) -> float:
         if amount > 0.0:
             self._save_update(amount)
             print("${:.2f} Deposited".format(amount / 100))
         return self._balance / 100
     
-
+    #Intialize account
     def withdraw(self, amount: int) -> float:
         if 0 < amount <= self._balance:
             self._save_update(-amount)
@@ -72,18 +71,18 @@ class Account:
             print("Insufficient Funds")
             return 0.0
         
-
+    #Display balances
     def show_balance(self):
         print("Balance On Account {} is ${:.2f}".format(self.name, self._balance / 100))
         
-
+    #Display transaction history
     def transaction_history(self,name: str):
         print("\nNOTE THAT AMOUNT VALUES IN THE LAST TWO COLUMN ARE CENT VALUES!") 
         for row in db.execute(" SELECT strftime('%Y-%m-%d %H:%M:%f', history.time, 'localtime') AS localtime,"
            " history.account, history.amount FROM history WHERE history.account like '{}%' ORDER BY history.time".format(name)):
             print(row)
             
-            
+    #Delete account      
     def delete_info(self, name:str):
         db.execute("DELETE FROM accounts WHERE name like '%{}%'".format(name))
         db.execute(" DELETE FROM history WHERE history.account like '{}%'".format(name))
